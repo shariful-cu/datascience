@@ -321,12 +321,12 @@ iris_dataframe['species'] = iris_lab_cat
 
 ##-----find probablity of a rare event (e.g., probability of most no-hitters---
 ##------in  a bassball game--
-#"""
-#Was 2015 anomalous?
-#1990 and 2015 featured the most no-hitters of any season of baseball 
-#(there were seven). Given that there are on average 251/115 no-hitters per 
-#season, what is the probability of having seven or more in a season?
-#"""    
+"""
+Was 2015 anomalous?
+1990 and 2015 featured the most no-hitters of any season of baseball 
+(there were seven). Given that there are on average 251/115 no-hitters per 
+season, what is the probability of having seven or more in a season?
+"""    
 ## Draw 10,000 samples out of Poisson distribution: n_nohitters
 #n_nohitters = np.random.poisson(251/115, 10000)
 ## Compute number of samples that are seven or greater: n_large
