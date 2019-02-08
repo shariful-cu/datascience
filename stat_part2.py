@@ -509,7 +509,7 @@ Hints:
     difference in means greater than or equal to what was observed.
 Results Analysis:
     Since the p-value is 0.0, 0% probability that the means force imapcts of 
-    Frog A and Frog B are equal or more extreme that the observed difference 
+    Frog A and Frog B are equal or more extreme than the observed difference 
     means of 0.63
     
     Nice work! You got a similar result as when you did the permutation test. 
@@ -561,10 +561,10 @@ print('p-value =', p)
 ###-----Hypothesis test----
 """
 Null Hypothesis:
-    Is the democretic vote share (% of votes) between these two states 
-    are equal?
+    the distribution of democretic vote share (% of votes) between these two states 
+    are identically distributed
 Test Statistic:
-    difference means of votes share between these two states
+    Is the difference means of votes share between these two states 
 Resutl Aanlysis:
     Since the p-value is 23%, 23% probability that the difference means of 
     votes shares between these two states are equal or more extreme than the 

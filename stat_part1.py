@@ -84,13 +84,13 @@ iris_dataframe['species'] = iris_lab_cat
 #or df_iris.target_names[1] if x == 1 or
 #                             df_iris.target_names[2] if x == 2
 
-##---Histogram----
-#versicolor_petal_length = data_iris[iris_lab == 1, 2]
-#n_bins = int(np.sqrt(len(versicolor_petal_length)))
-#plt.hist(versicolor_petal_length, bins=n_bins)
-#plt.xlabel('petal length (cm)')
-#plt.ylabel('count')
-#plt.show()
+#---Histogram----
+versicolor_petal_length = data_iris[iris_lab == 1, 2]
+n_bins = int(np.sqrt(len(versicolor_petal_length)))
+plt.hist(versicolor_petal_length, bins=n_bins)
+plt.xlabel('petal length (cm)')
+plt.ylabel('count')
+plt.show()
 
 ##---Swarm plot----
 #sns.swarmplot(x='species', y='petal length (cm)', data=iris_dataframe)
