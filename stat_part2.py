@@ -147,9 +147,42 @@ def draw_perm_reps(data_1, data_2, func, size=1):
 #plt.margins(0.02)
 #plt.show()
 
+#----------Hypothesis test on Pearson correlation--------
+"""
+Null Hypothesis:
+    The observed correlation between female illiteracy and fertility may just 
+    be by chance; the fertility of a given country may actually be totally 
+    independent of its illiteracy. You will test this hypothesis. To do so, 
+    permute the illiteracy values but leave the fertility values fixed. 
+    This simulates the hypothesis that they are totally independent of each 
+    other. For each permutation, compute the Pearson correlation coefficient 
+    and assess how many of your permutation replicates have a Pearson 
+    correlation coefficient greater than the observed one.
+Test Hypothesis: 
+    Pearson correlation
+Reslults Analysis:
+    You got a p-value of zero. In hacker statistics, this means that your 
+    p-value is very low, since you never got a single replicate in the 10,000 
+    you took that had a Pearson correlation greater than the observed one. 
+    You could try increasing the number of replicates you take to continue 
+    to move the upper bound on your p-value lower and lower.
+"""
+## Compute observed correlation: r_obs
+#r_obs = utlty_f.pearson_r(illiteracy, fertility)
+## Initialize permutation replicates: perm_replicates
+#perm_replicates = np.empty(10000)
+## Draw replicates
+#for i in range(10000):
+#    # Permute illiteracy measurments: illiteracy_permuted
+#    illiteracy_permuted = np.random.permutation(illiteracy)
+#    # Compute Pearson correlation
+#    perm_replicates[i] = utlty_f.pearson_r(illiteracy_permuted, fertility)
+## Compute p-value: p
+#p = np.sum(perm_replicates[i] >= r_obs) / len(perm_replicates)
+#print('p-val =', p)
+
  
 #====== End of Analysis of literacy/fertility data ========================
-
 
 #================== Linear regression on appropriate Anscombe data ============
 """
@@ -392,24 +425,24 @@ Result Analysis:
     p = 0.006 and p = 0.000000006 are both said to be "statistically 
     significant," but they are definitely not the same!
 """
-##--loading data---
-df_frog_tongue = pd.read_csv(data_dir + '/frog_tongue.csv', \
-                             skiprows=list(range(14)))
-#reading only columns: 'ID' and 'impact force (mN)'
-df_frog_tongue = df_frog_tongue.loc[:][['ID', 'impact force (mN)']]
-#modify column names
-df_frog_tongue.columns = ['ID', 'impact_force']
-#convert impact_force from mN to N
-df_frog_tongue['impact_force'] = df_frog_tongue['impact_force']/1000
-#replace ID values with two groups A(Adult)  & B(Juvenile): 
-#'Adult' (ID = I & II) and 'Juvenile' (ID = III & IV)
-df_frog_tongue = df_frog_tongue.replace(['I', 'II'], 'A')
-df_frog_tongue = df_frog_tongue.replace(['III', 'IV'], 'B')
-#read top 20 samples from each group
-df_ID_A = df_frog_tongue[df_frog_tongue['ID']=='A']
-df_ID_B = df_frog_tongue[df_frog_tongue['ID']=='B']
-#merge subset of group A and group B
-df_frog_tongue = pd.concat([df_ID_A, df_ID_B])
+###--loading data---
+#df_frog_tongue = pd.read_csv(data_dir + '/frog_tongue.csv', \
+#                             skiprows=list(range(14)))
+##reading only columns: 'ID' and 'impact force (mN)'
+#df_frog_tongue = df_frog_tongue.loc[:][['ID', 'impact force (mN)']]
+##modify column names
+#df_frog_tongue.columns = ['ID', 'impact_force']
+##convert impact_force from mN to N
+#df_frog_tongue['impact_force'] = df_frog_tongue['impact_force']/1000
+##replace ID values with two groups A(Adult)  & B(Juvenile): 
+##'Adult' (ID = I & II) and 'Juvenile' (ID = III & IV)
+#df_frog_tongue = df_frog_tongue.replace(['I', 'II'], 'A')
+#df_frog_tongue = df_frog_tongue.replace(['III', 'IV'], 'B')
+##read top 20 samples from each group
+#df_ID_A = df_frog_tongue[df_frog_tongue['ID']=='A']
+#df_ID_B = df_frog_tongue[df_frog_tongue['ID']=='B']
+##merge subset of group A and group B
+#df_frog_tongue = pd.concat([df_ID_A, df_ID_B])
 #
 ##---EDA before hypothesis testing-----
 ## Make bee swarm plot
@@ -517,37 +550,37 @@ Results Analysis:
     question you want to ask. Are you only interested in the mean impact force, 
     or in the distribution of impact forces?
 """
-# Compute mean of all forces: mean_force
-force_a = df_ID_A['impact_force']
-force_b = df_ID_B['impact_force']
-forces_concat = np.concatenate([force_a, force_b])
-mean_force = np.mean(forces_concat)
+## Compute mean of all forces: mean_force
+#force_a = df_ID_A['impact_force']
+#force_b = df_ID_B['impact_force']
+#forces_concat = np.concatenate([force_a, force_b])
+#mean_force = np.mean(forces_concat)
+#
+## Generate shifted arrays
+#force_a_shifted = force_a - np.mean(force_a) + mean_force
+#force_b_shifted = force_b - np.mean(force_b) + mean_force 
+#
+## Compute 10,000 bootstrap replicates from shifted arrays
+#bs_replicates_a = draw_bs_reps(force_a_shifted, np.mean, 10000)
+#bs_replicates_b = draw_bs_reps(force_b_shifted, np.mean, 10000)
+#
+## Get replicates of difference of means: bs_replicates
+#bs_replicates = bs_replicates_a - bs_replicates_b
+#
+##plotting PDF of this permutatoin test
+#plt.hist(bs_replicates, bins=50, normed=True)
+#_ = plt.xlabel('difference means of impact forces')
+#_ = plt.ylabel('PDF')
+#
+#x = [diff_of_means(force_a, force_b), diff_of_means(force_a, force_b)]
+#y = [0, 4]
+#plt.plot(x, y, color='red')
+#plt.show()
 
-# Generate shifted arrays
-force_a_shifted = force_a - np.mean(force_a) + mean_force
-force_b_shifted = force_b - np.mean(force_b) + mean_force 
-
-# Compute 10,000 bootstrap replicates from shifted arrays
-bs_replicates_a = draw_bs_reps(force_a_shifted, np.mean, 10000)
-bs_replicates_b = draw_bs_reps(force_b_shifted, np.mean, 10000)
-
-# Get replicates of difference of means: bs_replicates
-bs_replicates = bs_replicates_a - bs_replicates_b
-
-#plotting PDF of this permutatoin test
-plt.hist(bs_replicates, bins=50, normed=True)
-_ = plt.xlabel('difference means of impact forces')
-_ = plt.ylabel('PDF')
-
-x = [diff_of_means(force_a, force_b), diff_of_means(force_a, force_b)]
-y = [0, 4]
-plt.plot(x, y, color='red')
-plt.show()
-
-# Compute and print p-value: p
-p = np.sum(bs_replicates >= diff_of_means(force_a, force_b)) / 10000
-#p = np.sum(bs_replicates <= np.mean(force_b)) / 10000
-print('p-value =', p)
+## Compute and print p-value: p
+#p = np.sum(bs_replicates >= diff_of_means(force_a, force_b)) / 10000
+##p = np.sum(bs_replicates <= np.mean(force_b)) / 10000
+#print('p-value =', p)
 
 
 # ================ end of hypothesis test using frog_tongue dataset ===========
@@ -595,6 +628,395 @@ Resutl Aanlysis:
 #print('p-value =', p)
 
 # ================ end of hypothesis test using swing state dataset ===========
+
+# =================hypothesis test using bee_sperm dataset ====================
+##--loading data---
+#df_bee_sperm = pd.read_csv(data_dir + '/bee_sperm.csv', skiprows=[0,1,2])
+##alive sperm count (in milliion) for
+##untreated bees (control group)
+#control = df_bee_sperm[df_bee_sperm['Treatment'] == 'Control']['Alive Sperm Millions']
+#control = np.array(control)
+##treated bees with pesticide
+#treated = df_bee_sperm[df_bee_sperm['Treatment'] == 'Pesticide']['Alive Sperm Millions']
+#treated = np.array(treated)
+
+##---------EDA-------------
+#"""
+#Resutl Aanlysis:
+#    - The ECDFs show a pretty clear difference between the treatment and control
+#    - treated bees have fewer alive sperm
+#"""
+## Compute x,y values for ECDFs
+#x_control, y_control = utlty_f.ecdf(control)
+#x_treated, y_treated = utlty_f.ecdf(treated)
+## Plot the ECDFs
+#plt.plot(x_control, y_control, marker='.', linestyle='none')
+#plt.plot(x_treated, y_treated, marker='.', linestyle='none')
+## Set the margins
+#plt.margins(0.02)
+## Add a legend
+#plt.legend(('control', 'treated'), loc='lower right')
+## Label axes and show plot
+#plt.xlabel('millions of alive sperm per mL')
+#plt.ylabel('ECDF')
+#plt.show()
+
+##-----Bootstrap hypothesis test on bee sperm count----
+#"""
+#Null Hypothesis:
+#    you will test the following hypothesis: On average, male bees treated with 
+#    neonicotinoid insecticide have the same number of active sperm per 
+#    milliliter of semen than do untreated male bees. You will use the 
+#    difference of means as your test statistic.
+#Test Statistic: 
+#    difference of means of control counts and treated counts
+#Result Analysis:
+#    The p-value is small (reject the null hypothesis), most likely less than 
+#    0.0001, since you never saw a bootstrap replicated with a difference of 
+#    means at least as extreme as what was observed. In fact, when I did the 
+#    calculation with 10 million replicates, I got a p-value 
+#"""
+## Compute the difference in mean sperm count: diff_means
+#diff_means = control.mean() - treated.mean()
+## Compute mean of pooled data: mean_count
+#mean_count = np.mean(np.concatenate((control, treated)))
+## Generate shifted data sets
+#control_shifted = control - np.mean(control) + mean_count
+#treated_shifted = treated - np.mean(treated) + mean_count
+## Generate bootstrap replicates
+#bs_reps_control = draw_bs_reps(control_shifted,
+#                       np.mean, size=10000)
+#bs_reps_treated = draw_bs_reps(treated_shifted,
+#                       np.mean, size=10000)
+## Get replicates of difference of means: bs_replicates
+#bs_replicates = bs_reps_control - bs_reps_treated
+## Compute and print p-value: p
+#p = np.sum(bs_replicates >= diff_means) \
+#            / len(bs_replicates)
+#print('p-value =', p)
+
+# ================= end of hypothesis test using bee_sperm dataset ============
+
+# ====hypothesis test using beak depths of Darwin's finches dataset ===========
+
+#--loading data---
+df_finches_1975 = pd.read_csv(data_dir + '/finch_beaks_1975.csv')
+df_finches_2012 = pd.read_csv(data_dir + '/finch_beaks_2012.csv')
+
+#preparing df_finches_1975 for this analysis
+df_finches_1975['year'] = 1975
+mask = df_finches_1975['species'] == 'scandens'
+df_beak_1975 = df_finches_1975[mask][['Beak length, mm', 'Beak depth, mm', \
+                                'year']]
+df_beak_1975.columns = ['beak_length', 'beak_depth', 'year']
+
+#preparing df_finches_2012 for this analysis
+df_finches_2012['year'] = 2012 #adding 'year' column
+mask = df_finches_2012['species'] == 'scandens'
+df_beak_2012 = df_finches_2012[['blength', 'bdepth', 'year']]
+df_beak_2012.columns = ['beak_length', 'beak_depth', 'year']
+
+#concat both prepared datasets
+df = pd.concat([df_beak_1975, df_beak_2012], ignore_index=True)
+
+#-----EDA of beak depths of Darwin's finches-----
+
+# Create bee swarm plot
+"""
+Result Analysis:
+    It is kind of hard to see if there is a clear difference between the 1975 
+    and 2012 data set. Eyeballing it, it appears as though the mean of the 2012 
+    data set might be slightly higher, and it might have a bigger variance.
+"""
+_ = sns.swarmplot(x='year', y='beak_depth', data=df)
+# Label the axes
+_ = plt.xlabel('year')
+_ = plt.ylabel('beak depth (mm)')
+# Show the plot
+plt.show()
+
+# Compute ECDFs
+"""
+Result Analysis:
+    The differences are much clearer in the ECDF. The mean is larger in the 
+    2012 data, and the variance does appear larger as well.
+"""
+bd_1975 = df_beak_1975['beak_depth']
+bd_2012 = df_beak_2012['beak_depth']
+x_1975, y_1975 = utlty_f.ecdf(bd_1975)
+x_2012, y_2012 = utlty_f.ecdf(bd_2012)
+# Plot the ECDFs
+_ = plt.plot(x_1975, y_1975, marker='.', linestyle='none')
+_ = plt.plot(x_2012, y_2012, marker='.', linestyle='none')
+# Set margins
+plt.margins(0.02)
+# Add axis labels and legend
+_ = plt.xlabel('beak depth (mm)')
+_ = plt.ylabel('ECDF')
+_ = plt.legend(('1975', '2012'), loc='lower right')
+# Show the plot
+plt.show()
+
+#-----Parameter estimates of beak depths------
+"""
+Problem Definition:
+    Estimate the difference of the mean beak depth of the G. scandens samples 
+    from 1975 and 2012 and report a 95% confidence interval.
+Result Analysis:
+    Your plot of the ECDF and determination of the confidence interval make it 
+    pretty clear that the beaks of G. scandens on Daphne Major have gotten 
+    deeper.
+"""
+# Compute the difference of the sample means: mean_diff
+mean_diff = np.mean(bd_2012) - np.mean(bd_1975)
+# Get bootstrap replicates of means
+bs_replicates_1975 = draw_bs_reps(bd_1975, np.mean, size=10000)
+bs_replicates_2012 = draw_bs_reps(bd_2012, np.mean, size=10000)
+# Compute samples of difference of means: bs_diff_replicates
+bs_diff_replicates = bs_replicates_2012 - bs_replicates_1975
+# Compute 95% confidence interval: conf_int
+conf_int = np.percentile(bs_diff_replicates, [2.5, 97.5])
+# Print the results
+print('difference of means =', mean_diff, 'mm')
+print('95% confidence interval =', conf_int, 'mm')
+
+#---Hypothesis test: Are beaks deeper in 2012?--------
+"""
+Null Hypothesis:
+   The hypothesis is that the means are equal
+Test Statistic:
+    What is the probability that we would get the observed difference in mean 
+    beak depth if the means were the same?
+Result Analysis:
+    We get a p-value of 0.0034, which suggests that there is a statistically 
+    significant difference. But remember: it is very important to know how 
+    different they are! In the previous exercise, you got a difference 
+    of 0.2 mm between the means. You should combine this with the statistical 
+    significance. Changing by 0.2 mm in 37 years is substantial by 
+    evolutionary standards. If it kept changing at that rate, the beak depth 
+    would double in only 400 years.
+    
+"""
+# Compute mean of combined data set: combined_mean
+combined_mean = np.mean(np.concatenate((bd_1975, bd_2012)))
+# Shift the samples
+bd_1975_shifted = bd_1975 - np.mean(bd_1975) + combined_mean
+bd_2012_shifted = bd_2012 - np.mean(bd_2012) + combined_mean
+# Get bootstrap replicates of shifted data sets
+bs_replicates_1975 = draw_bs_reps(bd_1975_shifted, np.mean, 10000)
+bs_replicates_2012 = draw_bs_reps(bd_2012_shifted, np.mean, 10000)
+# Compute replicates of difference of means: bs_diff_replicates
+bs_diff_replicates = bs_replicates_2012 - bs_replicates_1975
+# Compute the p-value
+p = np.sum(bs_diff_replicates >= (np.mean(bd_2012) - np.mean(bd_1975))) / len(bs_diff_replicates)
+# Print p-value
+print('p =', p)
+
+#------EDA of beak length and depth--------
+"""
+Result Analysis:
+    In looking at the plot, we see that beaks got deeper (the red 
+    points are higher up in the y-direction), but not really longer. If 
+    anything, they got a bit shorter, since the red dots are to the left of 
+    the blue dots. So, it does not look like the beaks kept the same shape; 
+    they became shorter and deeper.
+"""
+bl_1975 = df_beak_1975['beak_length']
+bl_2012 = df_beak_2012['beak_length']
+
+# Make scatter plot of 1975 data
+_ = plt.plot(bl_1975, bd_1975, marker='.',
+             linestyle='none', alpha=0.5, color='blue')
+# Make scatter plot of 2012 data
+_ = plt.plot(bl_2012, bd_2012, marker='.',
+             linestyle='none', alpha=0.5, color='red')
+# Label axes and make legend
+_ = plt.xlabel('beak length (mm)')
+_ = plt.ylabel('beak depth (mm)')
+_ = plt.legend(('1975', '2012'), loc='upper left')
+# Show the plot
+plt.show()
+
+
+#************* TO DO: ********
+
+#-----------Linear regressions-------
+"""
+Problem Formulation:
+    Perform a linear regression for both the 1975 and 2012 data. Then, perform 
+    pairs bootstrap estimates for the regression parameters. Report 95% 
+    confidence intervals on the slope and intercept of the regression line.
+Result Analysis:
+    Nicely done! It looks like they have the same slope, but different 
+    intercepts.
+"""
+# Compute the linear regressions
+slope_1975, intercept_1975 = np.polyfit(bl_1975, bd_1975, 1)
+slope_2012, intercept_2012 = np.polyfit(bl_2012, bd_2012, 1)
+# Perform pairs bootstrap for the linear regressions
+bs_slope_reps_1975, bs_intercept_reps_1975 = draw_bs_pairs_linreg(bl_1975, \
+                                                                  bd_1975, 1000)
+bs_slope_reps_2012, bs_intercept_reps_2012 = \
+        draw_bs_pairs_linreg(bl_2012, bd_2012, 1000)
+# Compute confidence intervals of slopes
+slope_conf_int_1975 = np.percentile(bs_slope_reps_1975, [2.5, 97.5])
+slope_conf_int_2012 = np.percentile(bs_slope_reps_2012, [2.5, 97.5])
+intercept_conf_int_1975 = np.percentile(bs_intercept_reps_1975, [2.5, 97.5])
+intercept_conf_int_2012 = np.percentile(bs_intercept_reps_2012, [2.5, 97.5])
+# Print the results
+print('1975: slope =', slope_1975,
+      'conf int =', slope_conf_int_1975)
+print('1975: intercept =', intercept_1975,
+      'conf int =', intercept_conf_int_1975)
+print('2012: slope =', slope_2012,
+      'conf int =', slope_conf_int_2012)
+print('2012: intercept =', intercept_2012,
+      'conf int =', intercept_conf_int_2012)
+
+#TODO
+
+#-------Displaying the linear regression results-------
+"""
+Now, you will display your linear regression results on the scatter plot, the 
+code for which is already pre-written for you from your previous exercise. To 
+do this, take the first 100 bootstrap samples (stored in bs_slope_reps_1975, 
+bs_intercept_reps_1975, bs_slope_reps_2012, and bs_intercept_reps_2012) and 
+plot the lines with alpha=0.2 and linewidth=0.5 keyword arguments to plt.plot().
+"""
+# Make scatter plot of 1975 data
+_ = plt.plot(bl_1975, bd_1975, marker='.',
+             linestyle='none', color='blue', alpha=0.5)
+# Make scatter plot of 2012 data
+_ = plt.plot(bl_2012, bd_2012, marker='.',
+             linestyle='none', color='red', alpha=0.5)
+# Label axes and make legend
+_ = plt.xlabel('beak length (mm)')
+_ = plt.ylabel('beak depth (mm)')
+_ = plt.legend(('1975', '2012'), loc='upper left')
+# Generate x-values for bootstrap lines: x
+x = np.array([10, 17])
+# Plot the bootstrap lines
+for i in range(100):
+    plt.plot(x, bs_slope_reps_1975[i] * x + bs_intercept_reps_1975[i],
+             linewidth=0.5, alpha=0.2, color='blue')
+    plt.plot(x, bs_slope_reps_2012[i] * x + bs_intercept_reps_2012[i],
+             linewidth=0.5, alpha=0.2, color='red')
+# Draw the plot again
+plt.show()
+
+#---------Beak length to depth ratio----------
+"""
+The linear regressions showed interesting information about the beak geometry. 
+The slope was the same in 1975 and 2012, suggesting that for every millimeter 
+gained in beak length, the birds gained about half a millimeter in depth in 
+both years. However, if we are interested in the shape of the beak, we want 
+to compare the ratio of beak length to beak depth. Let's make that comparison.
+
+Result Analysis:
+    The mean beak length-to-depth ratio decreased by about 0.1, or 7%, from 
+    1975 to 2012. The 99% confidence intervals are not even close to 
+    overlapping, so this is a real change. The beak shape changed.
+"""
+# Compute length-to-depth ratios
+ratio_1975 = bl_1975 / bd_1975
+ratio_2012 = bl_2012 / bd_2012
+
+# Compute means
+mean_ratio_1975 = np.mean(ratio_1975)
+mean_ratio_2012 = np.mean(ratio_2012)
+
+# Generate bootstrap replicates of the means
+bs_replicates_1975 = draw_bs_reps(ratio_1975, np.mean, 10000)
+bs_replicates_2012 = draw_bs_reps(ratio_2012, np.mean, 10000)
+
+# Compute the 99% confidence intervals
+conf_int_1975 = np.percentile(bs_replicates_1975, [0.5, 99.5])
+conf_int_2012 = np.percentile(bs_replicates_2012, [0.5, 99.5])
+
+# Print the results
+print('1975: mean ratio =', mean_ratio_1975,
+      'conf int =', conf_int_1975)
+print('2012: mean ratio =', mean_ratio_2012,
+      'conf int =', conf_int_2012)
+
+
+#---------EDA of heritability-----
+"""
+The array bd_parent_scandens contains the average beak depth (in mm) of two 
+parents of the species G. scandens. The array bd_offspring_scandens contains 
+the average beak depth of the offspring of the respective parents. The arrays 
+bd_parent_fortis and bd_offspring_fortis contain the same information about 
+measurements from G. fortis birds.
+
+Make a scatter plot of the average offspring beak depth (y-axis) versus average 
+parental beak depth (x-axis) for both species. Use the alpha=0.5 keyword 
+argument to help you see overlapping points.
+
+Result Analysis:
+    It appears as though there is a stronger correlation in G. fortis than in 
+    G. scandens. This suggests that beak depth is more strongly inherited in 
+    G. fortis. We'll quantify this correlation next.
+"""
+# Make scatter plots
+_ = plt.plot(bd_parent_fortis, bd_offspring_fortis,
+             marker='.', linestyle='none', color='blue', alpha=0.5)
+_ = plt.plot(bd_parent_scandens, bd_offspring_scandens,
+             marker='.', linestyle='none', color='red', alpha=0.5)
+
+# Label axes
+_ = plt.xlabel('parental beak depth (mm)')
+_ = plt.ylabel('offspring beak depth (mm)')
+
+# Add legend
+_ = plt.legend(('G. fortis', 'G. scandens'), loc='lower right')
+
+# Show plot
+plt.show()
+
+#------Correlation of offspring and parental data-----
+"""
+"""
+
+# ====End of hypothesis test using beak depths of Darwin's finches dataset ====
+
+#========= Practice DataCamp Exercise ========
+
+#---------The vote for the Civil Rights Act in 1964
+# Construct arrays of data: dems, reps
+dems = np.array([True] * 153 + [False] * 91)
+reps = np.array([True] * 136 + [False] * 35)
+
+def frac_yea_dems(dems, reps):
+    """Compute fraction of Democrat yea votes."""
+    frac = sum(dems) / len(dems)
+    return frac
+
+# Acquire permutation samples: perm_replicates
+perm_replicates = draw_perm_reps(dems, reps, frac_yea_dems, 10000)
+
+# Compute and print p-value: p
+p = np.sum(perm_replicates <= 153/244) / len(perm_replicates)
+print('p-value =', p)
+
+
+#----------A time-on-website analog-------
+# Compute the observed difference in mean inter-no-hitter times: nht_diff_obs
+nht_diff_obs = diff_of_means(nht_dead, nht_live)
+
+# Acquire 10,000 permutation replicates of difference in mean no-hitter time: perm_replicates
+perm_replicates = draw_perm_reps(nht_dead, nht_live, diff_of_means, 10000)
+
+
+# Compute and print the p-value: p
+p = sum(perm_replicates <= nht_diff_obs) / len(perm_replicates)
+print('p-val =', p)
+
+#========= End of Practice DataCamp Exercise ========
+
+
+
+
+
 
 
 
